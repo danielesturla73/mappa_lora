@@ -119,7 +119,7 @@ input[type=range]{width:100%;accent-color:#14ffec;cursor:pointer;margin:1px 0}
     <div class="sub" id="hdr-sub">17972 device telemetria · 143 sensori PNRR · 33 gateway · Provincia di Pavia · dati: 27/04/2026</div>
   </div>
   <div id="header-right">
-    <button id="theme-btn" onclick="toggleTheme()">☀️ Tema chiaro</button>
+    <button id="theme-btn" onclick="toggleTheme()">🌙 Tema scuro</button>
     <button id="info-btn" onclick="document.getElementById('info-overlay').style.display='block'">ℹ️ Guida</button>
   </div>
 </div>
@@ -560,11 +560,11 @@ function selAll(val){COMUNI_LIST.forEach(cm=>{selectedComuni[val?'add':'delete']
 
 
 // ── TEMA MAPPA ────────────────────────────────────────────
-let isDark=true;
+let isDark=false;
 let tileLayer=null;
 
 function initTile(){
-  tileLayer=L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',maxZoom:19}).addTo(map);
+  tileLayer=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',maxZoom:19}).addTo(map);
 }
 
 function toggleTheme(){
