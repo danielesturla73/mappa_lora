@@ -110,14 +110,58 @@ input[type=range]{width:100%;accent-color:#14ffec;cursor:pointer;margin:1px 0}
 #theme-btn:hover{background:#0d7377;color:#fff}
 #header-right{display:flex;align-items:center;gap:8px}
 
+
+/* ── RESPONSIVE MOBILE ──────────────────────────────────── */
+#menu-btn{
+  display:none;
+  background:#0d7377;border:none;color:#fff;
+  cursor:pointer;border-radius:5px;padding:6px 10px;
+  font-size:1.1em;font-weight:700;transition:all .15s;
+  flex-shrink:0;
+}
+#sidebar-overlay{
+  display:none;position:fixed;top:0;left:0;
+  width:100%;height:100%;background:rgba(0,0,0,0.5);
+  z-index:999;
+}
+@media(max-width:768px){
+  #menu-btn{ display:flex;align-items:center; }
+  #sidebar{
+    position:fixed;top:0;left:-285px;height:100%;
+    z-index:1000;transition:left .25s ease;
+    box-shadow:4px 0 20px rgba(0,0,0,0.5);
+    width:280px!important;min-width:280px!important;
+  }
+  #sidebar.open{ left:0; }
+  #sidebar-overlay.open{ display:block; }
+  #map{ width:100%!important; }
+  #header h1{ font-size:.8em; }
+  #header .sub{ display:none; }
+  #header-right .sub-mobile{
+    display:block;font-size:.62em;color:#aaa;
+  }
+  /* Punti più grandi per touch */
+  .leaflet-interactive{ cursor:pointer; }
+  /* Popup più leggibili */
+  .leaflet-popup-content-wrapper{
+    min-width:200px!important;
+  }
+  .pr{ font-size:.88em!important;margin:3px 0!important; }
+  /* Bottom bar più alta */
+  #bot{ padding:6px 12px;font-size:.7em; }
+  /* Sezioni sidebar più spaziose */
+  .sec{ padding:10px 13px; }
+}
 </style>
 </head>
 <body>
+<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 <div id="header">
   <div>
     <h1>📡 LoRaWAN – Mappa Copertura RSSI / SNR / Qualità | Pavia Acque S.c.a.r.l.</h1>
     <div class="sub" id="hdr-sub">17972 device telemetria · 143 sensori PNRR · 33 gateway · Provincia di Pavia · dati: 27/04/2026</div>
   </div>
+  <button id="menu-btn" onclick="toggleSidebar()">☰</button>
   <div id="header-right">
     <button id="theme-btn" onclick="toggleTheme()">🌙 Tema scuro</button>
     <button id="info-btn" onclick="document.getElementById('info-overlay').style.display='block'">ℹ️ Guida</button>
@@ -526,7 +570,7 @@ function updateFilterRes(data){
 }
 
 const MODE_INFO={'heat-r':'<b>Heatmap RSSI:</b> densità segnale ricevuto. <b style="color:#f44336">Rosso</b>=forte, <b style="color:#1976d2">Blu</b>=debole.','heat-s':'<b>Heatmap SNR:</b> densità segnale/rumore. <b style="color:#f44336">Rosso</b>=ottimo, <b style="color:#1976d2">Blu</b>=rumoroso.','dots':'<b>Punti RSSI:</b> ogni cerchio = device. Colore = qualità RSSI. Clicca per dettagli + data.','snr':'<b>Punti SNR:</b> colore = qualità SNR. Clicca per dettagli.','qual':'<b>Qualità link:</b> giudizio combinato RSSI+SNR.'};
-function setMode(m){currentMode=m;['heat-r','heat-s','dots','snr','qual'].forEach(x=>document.getElementById('btn-'+x).classList.toggle('active',x===m));document.getElementById('mode-info').innerHTML=MODE_INFO[m];updateMap();}
+function setMode(m){currentMode=m;['heat-r','heat-s','dots','snr','qual'].forEach(x=>document.getElementById('btn-'+x).classList.toggle('active',x===m));document.getElementById('mode-info').innerHTML=MODE_INFO[m];updateMap();closeSidebarMobile();}
 
 function onRssiMin(v){rssiMin=parseInt(v);if(rssiMin>rssiMax){rssiMax=rssiMin;document.getElementById('rssi-max').value=rssiMax;}document.getElementById('rssi-min-v').textContent=v;document.getElementById('rssi-max-v').textContent=rssiMax;updateMap();}
 function onRssiMax(v){rssiMax=parseInt(v);if(rssiMax<rssiMin){rssiMin=rssiMax;document.getElementById('rssi-min').value=rssiMin;}document.getElementById('rssi-min-v').textContent=rssiMin;document.getElementById('rssi-max-v').textContent=v;updateMap();}
@@ -565,6 +609,22 @@ let tileLayer=null;
 
 function initTile(){
   tileLayer=L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{attribution:'© OpenStreetMap © CARTO',maxZoom:19}).addTo(map);
+}
+
+
+// ── SIDEBAR MOBILE ────────────────────────────────────────
+function toggleSidebar(){
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('open');
+}
+// Chiudi sidebar su cambio modalità (mobile)
+function closeSidebarMobile(){
+  if(window.innerWidth<=768){
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+  }
 }
 
 function toggleTheme(){
