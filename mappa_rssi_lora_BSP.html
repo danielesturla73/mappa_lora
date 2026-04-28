@@ -85,6 +85,26 @@ input[type=range]{width:100%;accent-color:#14ffec;cursor:pointer;margin:1px 0}
 .ok-badge{display:inline-block;background:#1a4a1a;color:#00e676;padding:1px 6px;border-radius:8px;font-size:.85em}
 .nc-badge{display:inline-block;background:#4a1a1a;color:#ff5252;padding:1px 6px;border-radius:8px;font-size:.85em}
 .mai-badge{display:inline-block;background:#3a3a1a;color:#888;padding:1px 6px;border-radius:8px;font-size:.85em}
+
+/* MODAL INFO */
+#info-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:9999;overflow-y:auto}
+#info-panel{background:#16213e;border:1px solid #0d7377;border-radius:10px;max-width:700px;margin:40px auto;padding:28px 32px;position:relative;color:#ddd}
+#info-panel h2{color:#14ffec;font-size:1.1em;margin-bottom:4px}
+#info-panel h3{color:#14ffec;font-size:.9em;margin:18px 0 8px;border-bottom:1px solid #0d4377;padding-bottom:4px}
+#info-panel p{font-size:.82em;line-height:1.65;color:#ccc;margin-bottom:8px}
+#info-panel .close-btn{position:absolute;top:12px;right:16px;background:#0d7377;border:none;color:#fff;font-size:1.1em;cursor:pointer;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+#info-panel .close-btn:hover{background:#14ffec;color:#000}
+.info-table{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:.78em}
+.info-table th{background:#0f3460;color:#14ffec;padding:5px 8px;text-align:left;font-weight:600}
+.info-table td{padding:5px 8px;border-bottom:1px solid #0d4377;color:#ccc;vertical-align:middle}
+.info-table tr:last-child td{border-bottom:none}
+.swatch{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.swatch-sq{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.tip-box{background:#0a2030;border-left:3px solid #14ffec;padding:8px 12px;border-radius:0 5px 5px 0;font-size:.78em;color:#aaa;margin:10px 0}
+.tip-box b{color:#14ffec}
+#info-btn{background:#0d7377;border:none;color:#fff;cursor:pointer;border-radius:5px;padding:5px 12px;font-size:.75em;font-weight:700;display:flex;align-items:center;gap:5px;transition:all .15s}
+#info-btn:hover{background:#14ffec;color:#000}
+
 </style>
 </head>
 <body>
@@ -94,6 +114,85 @@ input[type=range]{width:100%;accent-color:#14ffec;cursor:pointer;margin:1px 0}
     <div class="sub" id="hdr-sub">17972 device telemetria · 143 sensori PNRR · 33 gateway · Provincia di Pavia · dati: 27/04/2026</div>
   </div>
 </div>
+
+<div id="info-overlay" onclick="if(event.target===this)this.style.display='none'">
+ <div id="info-panel">
+  <button class="close-btn" onclick="document.getElementById('info-overlay').style.display='none'">✕</button>
+  <h2>📡 Guida alla mappa LoRaWAN</h2>
+  <p style="color:#888;font-size:.75em">Pavia Acque S.c.a.r.l. · Rete di telemetria idrica · Provincia di Pavia</p>
+
+  <h3>Cosa sono RSSI e SNR?</h3>
+  <p><b style="color:#14ffec">RSSI</b> (Received Signal Strength Indicator) indica la <b>potenza del segnale radio</b> ricevuto dal gateway LoRa, espressa in dBm. I valori sono sempre negativi: più il numero è vicino a zero, più il segnale è forte. Un device con RSSI -80 dBm riceve un segnale molto migliore di uno a -115 dBm.</p>
+  <p><b style="color:#14ffec">SNR</b> (Signal-to-Noise Ratio) indica il <b>rapporto tra segnale utile e rumore</b>, espresso in dB. Valori positivi significano che il segnale domina il rumore (buono). Valori negativi indicano che il segnale è parzialmente sommerso dal rumore — in LoRa è normale fino a circa -20 dB grazie alla modulazione Chirp Spread Spectrum.</p>
+  <div class="tip-box"><b>Perché servono entrambi?</b> Un device può avere RSSI accettabile ma SNR molto negativo (segnale forte ma disturbato) — o viceversa. Solo la combinazione dei due dà un giudizio affidabile sulla qualità del link.</div>
+
+  <h3>Classi di qualità RSSI</h3>
+  <table class="info-table">
+   <tr><th>Classe</th><th>Range</th><th>Significato</th></tr>
+   <tr><td><span class="swatch" style="background:#f44336"></span>Ottimo</td><td>≥ -75 dBm</td><td>Segnale eccellente, link molto stabile</td></tr>
+   <tr><td><span class="swatch" style="background:#ff9800"></span>Buono</td><td>-75 ÷ -90 dBm</td><td>Segnale buono, link affidabile</td></tr>
+   <tr><td><span class="swatch" style="background:#ffee58"></span>Accettabile</td><td>-90 ÷ -100 dBm</td><td>Uso normale, qualche perdita possibile</td></tr>
+   <tr><td><span class="swatch" style="background:#66bb6a"></span>Marginale</td><td>-100 ÷ -110 dBm</td><td>Al limite, dipende dallo spreading factor</td></tr>
+   <tr><td><span class="swatch" style="background:#00bcd4"></span>Scarso</td><td>-110 ÷ -115 dBm</td><td>Debole, possibili interruzioni</td></tr>
+   <tr><td><span class="swatch" style="background:#1976d2"></span>Critico</td><td>≤ -115 dBm</td><td>Segnale al limite della ricezione</td></tr>
+  </table>
+
+  <h3>Classi di qualità SNR</h3>
+  <table class="info-table">
+   <tr><th>Classe</th><th>Range</th><th>Significato</th></tr>
+   <tr><td><span class="swatch" style="background:#f44336"></span>Ottimo</td><td>≥ +5 dB</td><td>Ampio margine sul rumore</td></tr>
+   <tr><td><span class="swatch" style="background:#ff9800"></span>Buono</td><td>0 ÷ +5 dB</td><td>Segnale sopra il rumore</td></tr>
+   <tr><td><span class="swatch" style="background:#ffee58"></span>Accettabile</td><td>-5 ÷ 0 dB</td><td>Marginale ma funzionante</td></tr>
+   <tr><td><span class="swatch" style="background:#66bb6a"></span>Marginale</td><td>-10 ÷ -5 dB</td><td>Segnale parzialmente nel rumore</td></tr>
+   <tr><td><span class="swatch" style="background:#00bcd4"></span>Scarso</td><td>-15 ÷ -10 dB</td><td>Molto rumoroso, perdite frequenti</td></tr>
+   <tr><td><span class="swatch" style="background:#1976d2"></span>Critico</td><td>≤ -15 dB</td><td>Segnale sommerso dal rumore</td></tr>
+  </table>
+
+  <h3>Giudizio combinato RSSI + SNR</h3>
+  <p>Combina i due parametri per dare un unico giudizio sul link. Il link viene classificato in base al parametro peggiore tra i due.</p>
+  <table class="info-table">
+   <tr><th>Giudizio</th><th>Condizione RSSI</th><th>Condizione SNR</th></tr>
+   <tr><td><span class="swatch" style="background:#f44336"></span>Ottimo</td><td>&gt; -100 dBm</td><td>&gt; -5 dB</td></tr>
+   <tr><td><span class="swatch" style="background:#ff9800"></span>Buono</td><td>&gt; -100 dBm</td><td>&gt; -10 dB  oppure RSSI &gt;-110 e SNR &gt;-5</td></tr>
+   <tr><td><span class="swatch" style="background:#ffee58"></span>Accettabile</td><td>&gt; -110 dBm</td><td>&gt; -15 dB</td></tr>
+   <tr><td><span class="swatch" style="background:#66bb6a"></span>Marginale</td><td>&gt; -110 dBm</td><td>≤ -15 dB  oppure RSSI ≤-110 e SNR &gt;0</td></tr>
+   <tr><td><span class="swatch" style="background:#00bcd4"></span>Scarso</td><td>≤ -110 dBm</td><td>&gt; -10 dB</td></tr>
+   <tr><td><span class="swatch" style="background:#1976d2"></span>Critico</td><td>≤ -110 dBm</td><td>≤ -10 dB</td></tr>
+  </table>
+
+  <h3>Modalità di visualizzazione</h3>
+  <table class="info-table">
+   <tr><th>Tasto</th><th>Cosa mostra</th></tr>
+   <tr><td>🌡 Heat RSSI</td><td>Heatmap densità segnale RSSI. Rosso = forte e concentrato, Blu = debole. Visione d'insieme rapida.</td></tr>
+   <tr><td>🌡 Heat SNR</td><td>Come sopra ma per il parametro SNR.</td></tr>
+   <tr><td>⚫ Punti RSSI</td><td>Un cerchio per ogni device, colorato per classe RSSI. Clicca per dettagli.</td></tr>
+   <tr><td>🔵 Punti SNR</td><td>Come sopra ma colorato per classe SNR.</td></tr>
+   <tr><td>🏅 Qualità</td><td>Ogni cerchio colorato per giudizio combinato RSSI+SNR.</td></tr>
+  </table>
+
+  <h3>Filtri disponibili</h3>
+  <p><b style="color:#14ffec">Slider RSSI e SNR</b> — doppio slider min/max: mostrano solo i device nel range selezionato. Utile per isolare le zone con segnale migliore o peggiore di una soglia.</p>
+  <p><b style="color:#14ffec">Giudizio combinato</b> — checkbox per mostrare/nascondere singole classi di qualità.</p>
+  <p><b style="color:#14ffec">Comuni</b> — attiva o disattiva singoli comuni. Utile per analizzare una zona specifica.</p>
+  <p><b style="color:#14ffec">Sensori PNRR</b> — filtra per stato: Connesso / Non connesso / Mai comunicato.</p>
+
+  <h3>Layer aggiuntivi</h3>
+  <table class="info-table">
+   <tr><th>Layer</th><th>Simbolo</th><th>Descrizione</th></tr>
+   <tr><td>Gateway LoRa</td><td><span style="font-size:1.1em">📡</span> cerchio giallo</td><td>Posizione dei 33 gateway LoRaWAN attivi in provincia. Clicca per nome e coordinate.</td></tr>
+   <tr><td>Sensori PNRR</td><td><span class="swatch-sq" style="background:#00e676"></span>verde</td><td>Connesso — trasmette regolarmente</td></tr>
+   <tr><td></td><td><span class="swatch-sq" style="background:#ff5252"></span>rosso</td><td>Non connesso — assenza di comunicazione recente</td></tr>
+   <tr><td></td><td><span class="swatch-sq" style="background:#555"></span>grigio</td><td>Mai comunicato — device mai entrato in rete</td></tr>
+  </table>
+
+  <h3>Aggiornamento dati PNRR</h3>
+  <p>Il pulsante <b style="color:#14ffec">📂 Aggiorna dati PNRR</b> permette di aggiornare lo stato dei sensori PNRR senza modificare la mappa su GitHub. Basta cliccare e selezionare il file di export dal sistema di supervisione (formato TXT/CSV con separatore tab, stesso schema del file <code>270426.txt</code>). La mappa si aggiorna istantaneamente nel browser.</p>
+  <div class="tip-box"><b>Colonne richieste nel file:</b> WMS_DEVICE_ID · STATO_COM · DATA_ORA · QUALITA (RSSI) · SNR · PRESSIONE · BAT_DATALOGGER · VEL_FLUSSO</div>
+
+  <p style="margin-top:20px;font-size:.72em;color:#555;text-align:center">Pavia Acque S.c.a.r.l. · Rete LoRaWAN · Provincia di Pavia · Aprile 2026</p>
+ </div>
+</div>
+
 <div id="main">
  <div id="sidebar">
 
